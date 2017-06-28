@@ -1295,15 +1295,15 @@ Database: testdb
 +----------------+---------+
 ```
 
-### Dump database table entries
+### 把数据库表条目
 
-Switch and options: `--dump`, `-C`, `-T`, `-D`, `--start`, `--stop`, `--first`, `--last`, `--pivot-column` and `--where`
+开关和选项: `--dump`, `-C`, `-T`, `-D`, `--start`, `--stop`, `--first`, `--last`, `--pivot-column` 和 `--where`
 
-When the session user has read access to a specific database's table it is possible to dump the table entries.
+当会话用户访问特定数据库的表时，可以转储表项。
 
-This functionality depends on option `-T` to specify the table name and optionally on option `-D` to specify the database name. If the table name is provided, but the database name is not, the current database name is used.
+这个功能依赖于选项`-T`来指定表名，或者选择`-D` 来指定数据库名称。如果提供了表名，但数据库名不是，则使用当前数据库名称。
 
-Example against a Firebird target:
+针对Firebird目标的例子:
 
 ```
 $ python sqlmap.py -u "http://192.168.136.131/sqlmap/firebird/get_int.php?id=1"\
@@ -1322,21 +1322,22 @@ Table: USERS
 +----+--------+------------+
 ```
 
-This switch can also be used to dump all tables' entries of a provided database. You simply have to provide sqlmap with the switch `--dump` along with only the option `-D` (no `-T` and no `-C`).
+这个开关还可以用来转储提供的数据库的所有表的条目。你只需要提供sqlmap和开关`--dump`以及只有选项`-D`(不用`-T`和`-C`)。
 
-You can also provide a comma-separated list of the specific columns to dump with the option `-C`.
+您还可以提供与选项 `-C`转储的特定列的逗号分隔列表。
 
-sqlmap also generates for each table dumped the entries in a CSV format textual file. You can see the absolute path where sqlmap creates the file by providing a verbosity level greater than or equal to **1**.
+sqlmap也为每个表生成一个CSV格式文本文件中的条目。通过提供大于或等于**1**的赘言级别，可以看到sqlmap创建文件的绝对路径。
 
-If you want to dump only a range of entries, then you can provide options `--start` and/or `--stop` to respectively start to dump from a certain entry and stop the dump at a certain entry. For instance, if you want to dump only the first entry, provide `--stop 1` in your command line. Vice versa if, for instance, you want to dump only the second and third entry, provide `--start 1` `--stop 3`.
+如果您只想转储一系列的条目，那么您可以提供选项 `--start`和/或`--stop`，分别从某个条目开始转储，并在某个条目中停止转储。例如，如果只想转储第一个条目，则在命令行中提供`--stop 1` 。反之亦然，例如，如果您想只转储第二个和第三个条目，则提供`--start 1` `--stop 3`。
 
-It is also possible to specify which single character or range of characters to dump with options `--first` and `--last`. For instance, if you want to dump columns' entries from the third to the fifth character, provide `--first 3` `--last 5`. This feature only applies to the blind SQL injection techniques because for error-based and UNION query SQL injection techniques the number of requests is exactly the same, regardless of the length of the column's entry output to dump.
+还可以指定要转储哪些单个字符或字符的范围`--first` 和 `--last`。例如，如果您想将列的条目从第三个字符转储到第五个字符，则提供`--first 3` `--last 5`。这个特性只适用于盲SQL注入技术，因为对于基于errorsql的和UNION查询SQL注入技术，请求的数量是完全相同的，无论列的输入输出的长度是多少。
 
-Sometimes (e.g. for Microsoft SQL Server, Sybase and SAP MaxDB) it is not possible to dump the table rows straightforward by using `OFFSET m, n` mechanism because of lack of similar. In such cases sqlmap dumps the content by determining the most suitable `pivot` column (the one with most unique values) whose values are used later on for retrieval of other column values. If it is necessary to enforce the usage of particular `pivot` column because the automatically chosen one is not suitable (e.g. because of lack of table dump results) you can use option `--pivot-column` (e.g. `--pivot-column=id`).
+有时(例如，对于Microsoft SQL Server、Sybase和SAP MaxDB)，使用`OFFSET m, n`机制来直接转储表行是不可能的，因为缺少类似的机制。在这种情况下，sqlmap通过确定最合适的`pivot`列(具有最独特的值的)来转储内容，这些值稍后将用于检索其他列值。如果需要执行特定的`pivot`列的使用，因为自动选择的一个不合适(例如由于缺少表转储结果)，您可以使用选项`--pivot-column`(例如，`--pivot-column=id`)。
 
-In case that you want to constraint the dump to specific column values (or ranges) you can use option `--where`. Provided logical operation will be automatically used inside the `WHERE` clause. For example, if you use `--where="id>3"` only table rows having value of column `id` greater than 3 will be retrieved (by appending `WHERE id>3` to used dumping queries).
+如果您希望将转储限制为特定的列值(或范围)，则可以使用选项 `--where`。在`WHERE`子句中，提供了逻辑操作。例如，如果使用`--where="id>3"`唯一表行具有大于3的列`id`值的表行将会被检索(通过追加 `WHERE id>3` 来使用转储查询)。
 
-As you may have noticed by now, sqlmap is **flexible**: you can leave it to automatically dump the whole database table or you can be very precise in which characters to dump, from which columns and which range of entries.
+正如您现在已经注意到的，sqlmap是 **灵活的**:您可以让它自动转储整个数据库表，或者您可以非常精确地从哪个字符转储，从哪个列和哪个范围的条目中转储。
+
 
 ### Dump all databases tables entries
 
