@@ -1030,23 +1030,23 @@ If for any instance you want to perform an extensive database management system 
 
 If you want the fingerprint to be even more accurate result, you can also provide the switch `-b` or `--banner`. 
 
-## Enumeration
+## 枚举
 
-These options can be used to enumerate the back-end database management system information, structure and data contained in the tables. Moreover you can run your own SQL statements. 
+这些选项可用于枚举表中包含的后端数据库管理系统信息、结构和数据。此外，还可以运行自己的SQL语句。
 
-### Retrieve all
+### 检索全部
 
-Switch: `--all`
+开关: `--all`
 
-This switch can be used in situations where user wants to retrieve everything remotely accessible by using a single switch. This is not recommended as it will generate large number of requests retrieving both useful and unuseful data.
+这个开关可以在用户想通过使用一个开关来检索所有远程访问的情况下使用。这是不推荐的，因为它将生成大量请求检索有用和无用的数据。
 
-### Banner
+### 标语
 
-Switch: `-b` or `--banner`
+开关: `-b` or `--banner`
 
-Most of the modern database management systems have a function and/or  an environment variable which returns the database management system version and eventually details on its patch level, the underlying system. Usually the function is `version()` and the environment variable is `@@version`, but this vary depending on the target DBMS. 
+大多数现代数据库管理系统都有一个函数和/或一个环境变量，该变量返回数据库管理系统版本，并最终在其补丁级别(底层系统)上详细说明。通常函数是 `version()` 而环境变量是 `@@version`，但这取决于目标DBMS。
 
-Example against an Oracle target:
+反对Oracle目标的例子:
 
 ```
 $ python sqlmap.py -u "http://192.168.136.131/sqlmap/oracle/get_int.php?id=1" -\
@@ -1059,25 +1059,25 @@ back-end DBMS: Oracle
 banner:    'Oracle Database 10g Enterprise Edition Release 10.2.0.1.0 - Prod'
 ```
 
-### Session user
+### 会话用户
 
-Switch: `--current-user`
+开关: `--current-user`
 
-With this switch it is possible to retrieve the database management system's user which is effectively performing the query against the back-end DBMS from the web application. 
+有了这个开关，就可以检索数据库管理系统的用户，该用户实际上是通过web应用程序对后端DBMS执行查询。
 
-### Current database
+### 当前数据库
 
-Switch: `--current-db`
+开关: `--current-db`
 
-With this switch it is possible to retrieve the database management system's database name that the web application is connected to.
+使用此开关，可以检索web应用程序连接到的数据库管理系统的数据库名称。
 
-### Server hostname
+### 服务器主机名
 
-Switch: `--hostname`
+开关: `--hostname`
 
-With this switch it is possible to retrieve the database management system's hostname.
+使用这个开关，可以检索数据库管理系统的主机名。
 
-Example against a MySQL target:
+针对MySQL目标的例子:
 
 ```
 $ python sqlmap.py -u "http://192.168.136.131/sqlmap/mysql/get_int.php?id=1" --\
@@ -1089,25 +1089,25 @@ hostname
 hostname:    'debian-5.0-i386'
 ```
 
-### Detect whether or not the session user is a database administrator
+### 检测会话用户是否是数据库管理员
 
-Switch: `--is-dba`
+开关: `--is-dba`
 
-It is possible to detect if the current database management system session user is a database administrator, also known as DBA. sqlmap will return `True` if it is, vice versa `False`. 
+如果当前的数据库管理系统会话用户是数据库管理员，也称为DBA，则可以检测到它。如果是，sqlmap将返回 `True` ，反之亦然。
 
-### List database management system users
+### 列出数据库管理系统的用户
 
-Switch: `--users`
+开关: `--users`
 
-When the session user has read access to the system table containing information about the DBMS users, it is possible to enumerate the list of users. 
+当会话用户读取包含DBMS用户信息的系统表时，可以枚举用户列表。
 
-### List and crack database management system users password hashes
+### 列表和破解数据库管理系统用户密码散列
 
-Switch: `--passwords`
+开关: `--passwords`
 
-When the session user has read access to the system table containing information about the DBMS users' passwords, it is possible to enumerate the password hashes for each database management system user. sqlmap will first enumerate the users, then the different password hashes for each of them. 
+当会话用户读取包含关于DBMS用户密码信息的系统表的访问时，可以为每个数据库管理系统用户枚举密码散列。sqlmap将首先枚举用户，然后对每个用户进行不同的密码散列。
 
-Example against a PostgreSQL target:
+针对PostgreSQL目标的例子:
 
 ```
 $ python sqlmap.py -u "http://192.168.136.131/sqlmap/pgsql/get_int.php?id=1" --\
