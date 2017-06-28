@@ -1604,27 +1604,26 @@ do you want to remove UDF 'sys_exec'? [Y/n] y
 tem can only be deleted manually
 ```
 
-It is also possible to simulate a real shell where you can type as many arbitrary commands as you wish. The option is `--os-shell` and has the same TAB completion and history functionalities that `--sql-shell` has. 
+还可以模拟一个真正的shell，在这里您可以任意输入任意命令。选项是`--os-shell` ，并具有与 `--sql-shell` 相同的选项卡完成和历史功能。
 
-Where stacked queries has not been identified on the web application (e.g. PHP or ASP with back-end database management system being MySQL) and the DBMS is MySQL, it is still possible to abuse the `SELECT` clause's `INTO OUTFILE` to create a web backdoor in a writable folder within the web server document root and still get command execution assuming the back-end DBMS and the web server are hosted on the same server. sqlmap supports this technique and allows the user to provide a comma-separated list of possible document root sub-folders where try to upload the web file stager and the subsequent web backdoor. Also, sqlmap has its own tested web file stagers and backdoors for the following languages: 
+堆叠查询尚未确定在web应用程序(如PHP、ASP与后端数据库管理系统是MySQL)和DBMS MySQL,仍有可能滥用 `选择` 条款的 `到输出文件`可写文件夹中创建一个web后门在web服务器的文档根目录,仍然得到命令执行假设后端数据库管理系统和web服务器驻留在同一台服务器上。sqlmap支持这种技术，并允许用户提供一个以逗号分隔的可能的文档根子文件夹列表，在其中尝试上传web文件stager和随后的web后门。另外，sqlmap也有自己的测试web文件stager和以下语言的后门:
 
 * ASP
 * ASP.NET
 * JSP
 * PHP
 
-### Out-of-band stateful connection: Meterpreter & friends
+### 带外状态连接:Meterpreter和friends
 
-Switches and options: `--os-pwn`, `--os-smbrelay`, `--os-bof`, `--priv-esc`, `--msf-path` and `--tmp-path`
+开关和选项: `--os-pwn`, `--os-smbrelay`, `--os-bof`, `--priv-esc`, `--msf-path` 和 `--tmp-path`
 
-It is possible to establish an **out-of-band stateful TCP connection between the attacker machine and the database server** underlying operating system when the back-end database management system is either MySQL, PostgreSQL or Microsoft SQL Server, and the session user has the needed privileges to abuse database specific functionalities and architectural weaknesses. This channel can be an interactive command prompt, a Meterpreter session or a graphical user interface (VNC) session as per user's choice. 
+可以建立一个 **带外有状态的攻击者之间的TCP连接机器和数据库服务器** 底层操作系统后端数据库管理系统时MySQL、PostgreSQL或Microsoft SQL server,会话用户所需的特权滥用数据库特定功能和架构的弱点。这个通道可以是交互式命令提示符、Meterpreter会话或图形用户界面(VNC)作为每个用户的选择。
 
-sqlmap relies on Metasploit to create the shellcode and implements four different techniques to execute it on the database server. These techniques are:
+sqlmap依赖于Metasploit来创建shell代码并实现四种不同的技术来在数据库服务器上执行它。这些技术包括:
 
-* Database **in-memory execution of the Metasploit's shellcode** via sqlmap own user-defined function `sys_bineval()`. Supported on MySQL and PostgreSQL - switch `--os-pwn`.
-* Upload and execution of a Metasploit's **stand-alone payload stager** via sqlmap own user-defined function `sys_exec()` on MySQL and PostgreSQL or via `xp_cmdshell()` on Microsoft SQL Server - switch `--os-pwn`.
-* Execution of Metasploit's shellcode by performing a **SMB reflection attack** ([MS08-068](http://www.microsoft.com/technet/security/Bulletin/MS08-068.mspx)) with a UNC path request from the database server to
-the attacker's machine where the Metasploit `smb_relay` server exploit listens. Supported when running sqlmap with high privileges (`uid=0`) on Linux/Unix and the target DBMS runs as Administrator on Windows - switch `--os-smbrelay`.
+* 通过sqlmap拥有用户定义的函数 `sys_bineval()`，实现数据库 **Metasploit的shell代码的内存执行** 。支持MySQL和PostgreSQL - 开关 `--os-pwn`.
+* 通过sqlmap自己的用户定义函数`sys_exec()`，上载和执行一个Metasploit的 **s独立有效负载** ，在MySQL和PostgreSQL或通过`xp_cmdshell()`在微软的SQL服务器上 - 开关 `--os-pwn`.
+* 通过执行**SMB反射攻击**来执行Metasploit的shell代码 ([MS08-068](http://www.microsoft.com/technet/security/Bulletin/MS08-068.mspx)) 通过一条从数据库服务器到攻击者的机器的UNC路径请求， 其中 Metasploit `smb_relay` 服务器利用侦听器。 在运行sqlmap时，在Linux / Unix上使用高权限 (`uid=0`) on Linux/Unix and the target DBMS runs as Administrator on Windows - switch `--os-smbrelay`.
 * Database in-memory execution of the Metasploit's shellcode by exploiting **Microsoft SQL Server 2000 and 2005
 `sp_replwritetovarbin` stored procedure heap-based buffer overflow** ([MS09-004](http://www.microsoft.com/technet/security/bulletin/ms09-004.mspx)). sqlmap has its own exploit to trigger the
 vulnerability with automatic DEP memory protection bypass, but it relies on Metasploit to generate the shellcode to get executed upon successful exploitation - switch `--os-bof`.
