@@ -1339,39 +1339,39 @@ sqlmap也为每个表生成一个CSV格式文本文件中的条目。通过提�
 正如您现在已经注意到的，sqlmap是 **灵活的**:您可以让它自动转储整个数据库表，或者您可以非常精确地从哪个字符转储，从哪个列和哪个范围的条目中转储。
 
 
-### Dump all databases tables entries
+### 转储所有数据库表条目
 
-Switches: `--dump-all` and `--exclude-sysdbs`
+开关: `--dump-all` 和 `--exclude-sysdbs`
 
-It is possible to dump all databases tables entries at once that the session user has read access on.
+可以立即转储所有数据库表条目，会话用户可以读取访问。
 
-You can also provide the switch `--exclude-sysdbs` to exclude all system databases. In that case sqlmap will only dump entries of users' databases tables.
+您还可以提供开关 `--exclude-sysdbs` 来排除所有系统数据库。在这种情况下，sqlmap只会转储用户数据库表的条目。
 
-Note that on Microsoft SQL Server the `master` database is not considered a system database because some database administrators use it as a users' database.
+注意，在Microsoft SQL Server上，`master` 数据库不被视为系统数据库，因为一些数据库管理员将其用作用户数据库。
 
-### Search for columns, tables or databases
+### 搜索列、表或数据库
 
-Switch and options: `--search`, `-C`, `-T`, `-D`
+开关和选项: `--search`, `-C`, `-T`, `-D`
 
-This switch allows you to **search for specific database names, specific tables across all databases or specific columns across all databases' tables**. 
+这个开关允许您 **搜索特定的数据库名称、跨所有数据库的特定表或跨所有数据库表的特定列。**. 
 
-This is useful, for instance, to identify tables containing custom application credentials where relevant columns' names contain string like _name_ and _pass_.
+例如，这对于识别包含自定义应用程序凭据的表是有用的，在这些表中，相关列的名称包含_name_和_pass_等字符串。
 
-Switch `--search` needs to be used in conjunction with one of the following support options:
+开关`--search`需要与以下支持选项之一一起使用:
 
-* `-C` following a list of comma-separated column names to look for across the whole database management system.
-* `-T` following a list of comma-separated table names to look for across the whole database management system.
-* `-D` following a list of comma-separated database names to look for across the database management system.
+* `-C` 遵循逗号分隔的列名列表，以便在整个数据库管理系统中查找。
+* `-T` 遵循逗号分隔的表名，以便在整个数据库管理系统中查找。
+* `-D` 遵循逗号分隔的数据库名称来查找整个数据库管理系统。
 
-### Run custom SQL statement
+### 运行自定义SQL语句
 
-Option and switch: `--sql-query` and `--sql-shell`
+选项和开关: `--sql-query` 和 `--sql-shell`
 
-The SQL query and the SQL shell features allow to run arbitrary SQL statements on the database management system. sqlmap automatically dissects the provided statement, determines which technique is appropriate to use to inject it and how to pack the SQL payload accordingly. 
+SQL查询和SQL shell特性允许在数据库管理系统上运行任意的SQL语句。sqlmap会自动地剖析所提供的语句，确定使用哪种技术注入它以及如何相应地打包SQL有效负载。
 
-If the query is a `SELECT` statement, sqlmap will retrieve its output. Otherwise it will execute the query through the stacked query SQL injection technique if the web application supports multiple statements on the back-end database management system. Beware that some web application technologies do not support stacked queries on specific database management systems. For instance, PHP does not support stacked queries when the back-end DBMS is MySQL, but it does support when the back-end DBMS is PostgreSQL.
+如果查询是`SELECT`语句，sqlmap将检索其输出。否则，如果web应用程序支持后端数据库管理系统上的多个语句，它将通过堆叠查询SQL注入技术来执行查询。请注意，某些web应用程序技术不支持对特定的数据库管理系统进行堆叠查询。例如，当后端DBMS是MySQL时，PHP不支持堆叠查询，但它支持后端DBMS是PostgreSQL。
 
-Examples against a Microsoft SQL Server 2000 target:
+针对Microsoft SQL Server 2000目标的示例:
 
 ```
 $ python sqlmap.py -u "http://192.168.136.131/sqlmap/mssql/get_int.php?id=1" --\
@@ -1401,32 +1401,33 @@ RCHAR(8000)), (CHAR(32)))
 SELECT 'foo', 'bar':    'foo, bar'
 ```
 
-As you can see, sqlmap splits the provided query into two different `SELECT` statements then retrieves the output for each separate query. 
+如您所见，sqlmap将提供的查询拆分为两个不同的 `SELECT` statements then retrieves the output for each separate query. 
 
-If the provided query is a `SELECT` statement and contains a `FROM` clause, sqlmap will ask you if such statement can return multiple entries. In that case the tool knows how to unpack the query correctly to count the number of possible entries and retrieve its output, entry per entry. 
+如果提供的查询是一个 `SELECT`语句并包含一个`FROM`子句，sqlmap将询问这样的语句是否可以返回多个条目。在这种情况下，该工具知道如何正确地解压查询，以计数可能的条目的数量并检索它的输出，每个条目的条目。
 
-The SQL shell option allows you to run your own SQL statement interactively, like a SQL console connected to the database management system. This feature provides TAB completion and history support too. 
+SQL shell选项允许您交互式地运行自己的SQL语句，就像连接到数据库管理系统的SQL控制台一样。这个功能也提供了标签完成和历史支持。
+破解
 
-## Brute force
+### 暴力
 
-These switches can be used to run brute force checks.
+这些开关可以用来运行暴力检查。
 
-### Brute force tables names
+### 暴力检索表名称
 
-Switch: `--common-tables`
+开关: `--common-tables`
 
-There are cases where switch `--tables` can not be used to retrieve the databases' table names. These cases usually fit into one of the following categories: 
+有些情况下，开关`--tables`不能用于检索数据库的表名。这些案件通常属于以下类别之一:
 
-* The database management system is MySQL **< 5.0** where `information_schema` is not available.
-* The database management system is Microsoft Access and system table `MSysObjects` is not readable - default setting.
-* The session user does not have read privileges against the system table storing the scheme of the databases.
+* 数据库管理系统是MySQL **< 5.0** ，在这里不提供 `information_schema`。
+* 数据库管理系统是Microsoft Access，系统表 `MSysObjects` 是不可读的 - 默认设置。
+* 会话用户不具有对存储数据库方案的系统表的权限。
 
-If any of the first two cases apply and you provided the switch `--tables`, sqlmap will prompt you with a question
-to fall back to this technique. Either of these cases apply to your situation, sqlmap can possibly still identify some existing tables if you provide it with the switch `--common-tables`. sqlmap will perform a brute-force attack in order to detect the existence of common tables across the DBMS.
+如果前两个案例中的任何一个应用，并且您提供了开关 `--tables`，sqlmap将提示您一个问题
+回到这个技巧。这两种情况中的任何一个都适用于您的情况，sqlmap可能仍然可以识别一些现有的表，如果您提供了开关 `--common-tables`。sqlmap将执行蛮力攻击，以检测DBMS中常见表的存在。
 
-The list of common table names is `txt/common-tables.txt` and you can edit it as you wish.
+常用表名的列表是 `txt/common-tables.txt` 。你可以随意编辑它。
 
-Example against a MySQL 4.1 target:
+针对MySQL 4.1目标的例子:
 
 ```
 $ python sqlmap.py -u "http://192.168.136.129/mysql/get_int_4.php?id=1" --commo\
