@@ -1412,7 +1412,7 @@ SQL shell选项允许您交互式地运行自己的SQL语句，就像连接到�
 
 这些开关可以用来运行暴力检查。
 
-### 暴力检索表名称
+### 暴力表名称
 
 开关: `--common-tables`
 
@@ -1457,50 +1457,50 @@ Database: testdb
 +-------+
 ```
 
-### Brute force columns names
+### 暴力列名
 
-Switch: `--common-columns`
+开关: `--common-columns`
 
-As per tables, there are cases where switch `--columns` can not be used to retrieve the databases' tables' column names. These cases usually fit into one of the following categories: 
+根据表，有一些情况下，开关 `--columns`不能用于检索数据库的表的列名。这些案件通常属于以下类别之一: 
 
-* The database management system is MySQL **< 5.0** where `information_schema` is not available.
-* The database management system is Microsoft Access where this kind of information is not available inside system tables.
-* The session user does not have read privileges against the system table storing the scheme of the databases.
+* 数据库管理系统是MySQL**< 5.0**，没有提供`information_schema` 。
+* 数据库管理系统是Microsoft Access，这种信息在系统表中是不可用的。
+* 会话用户不具有对存储数据库方案的系统表的权限。
 
-If any of the first two cases apply and you provided the switch `--columns`, sqlmap will prompt you with a question
-to fall back to this technique. Either of these cases apply to your situation, sqlmap can possibly still identify some existing tables if you provide it with the switch `--common-columns`. sqlmap will perform a brute-force attack in order to detect the existence of common columns across the DBMS.
+如果前两个案例中的任何一个应用，并且您提供了开关 `--columns`，sqlmap将提示您一个问题
+回到这个技巧。这两种情况中的任何一个都适用于您的情况，sqlmap可能仍然可以识别一些现有的表，如果您提供了开关`--common-columns`。sqlmap将执行暴力攻击，以检测DBMS中常见的列的存在。
 
-The list of common table names is `txt/common-columns.txt` and you can edit it as you wish.
+常用表名的列表是`txt/common-columns.txt`。你可以随意编辑它。
 
-## User-defined function injection
+## 用户定义函数注入
 
-These options can be used to create custom user-defined functions.
+这些选项可用于创建自定义用户定义的函数。
 
-### Inject custom user-defined functions (UDF)
+### 注入自定义用户定义函数(UDF)
 
-Switch and option: `--udf-inject` and `--shared-lib`
+开关和选项: `--udf-inject` 和 `--shared-lib`
 
-You can inject your own user-defined functions (UDFs) by compiling a MySQL or PostgreSQL shared library, DLL for Windows and shared object for Linux/Unix, then provide sqlmap with the path where the shared library is stored locally on your machine. sqlmap will then ask you some questions, upload the shared library on the database server file system, create the user-defined function(s) from it and, depending on your options, execute them. When you are finished using the injected UDFs, sqlmap can also remove them from the database for you. 
+您可以通过编译一个MySQL或PostgreSQL共享库、为Linux / Unix的共享对象提供一个MySQL或PostgreSQL共享库、然后提供sqlmap和在您的机器上本地存储共享库的路径来注入您自己的用户定义函数(udf)。然后sqlmap会问你一些问题，在数据库服务器文件系统上上传共享库，创建用户定义的函数，根据你的选项执行它们。当您使用注入的udf完成后，sqlmap也可以将它们从数据库中删除。
 
-These techniques are detailed in the white paper [Advanced SQL injection to operating system full control](http://www.slideshare.net/inquis/advanced-sql-injection-to-operating-system-full-control-whitepaper-4633857).
+这些技术在白皮书中很详细 [Advanced SQL injection to operating system full control](http://www.slideshare.net/inquis/advanced-sql-injection-to-operating-system-full-control-whitepaper-4633857).
 
-Use option `--udf-inject` and follow the instructions.
+使用选项 `--udf-inject` 然后按指示进行。
 
-If you want, you can specify the shared library local file system path via command line too by using `--shared-lib` option. Vice versa sqlmap will ask you for the path at runtime.
+如果需要，可以通过命令行指定共享库本地文件系统路径，也可以使用 `--shared-lib` 选项。反之亦然sqlmap会在运行时向您询问路径。
 
-This feature is available only when the database management system is MySQL or PostgreSQL.
+只有当数据库管理系统是MySQL或PostgreSQL时，此特性才可用。
 
-## File system access
+## 文件系统访问
 
-### Read a file from the database server's file system
+### 从数据库服务器的文件系统中读取文件
 
-Option: `--file-read`
+选项: `--file-read`
 
-It is possible to retrieve the content of files from the underlying file system when the back-end database management system is either MySQL, PostgreSQL or Microsoft SQL Server, and the session user has the needed privileges to abuse database specific functionalities and architectural weaknesses. The file specified can be either a textual or a binary file. sqlmap will handle it properly. 
+当后端数据库管理系统是MySQL、PostgreSQL或Microsoft SQL Server时，从底层文件系统中检索文件的内容是可能的，会话用户有必要的特权来滥用数据库的特定功能和架构弱点。指定的文件可以是文本文件或二进制文件。sqlmap将正确处理它。
 
-These techniques are detailed in the white paper [Advanced SQL injection to operating system full control](http://www.slideshare.net/inquis/advanced-sql-injection-to-operating-system-full-control-whitepaper-4633857).
+这些技术在白皮书中很详细 [Advanced SQL injection to operating system full control](http://www.slideshare.net/inquis/advanced-sql-injection-to-operating-system-full-control-whitepaper-4633857).
 
-Example against a Microsoft SQL Server 2005 target to retrieve a binary file:
+针对Microsoft SQL Server 2005目标检索二进制文件的示例:
 
 ```
 $ python sqlmap.py -u "http://192.168.136.129/sqlmap/mssql/iis/get_str2.asp?nam\
@@ -1527,15 +1527,14 @@ output/192.168.136.129/files/C__example.exe: PE32 executable for MS Windows (GUI
 ) Intel 80386 32-bit
 ```
 
-### Upload a file to the database server's file system
+### 将文件上载到数据库服务器的文件系统
+选项: `--file-write` 和 `--file-dest`
 
-Options: `--file-write` and `--file-dest`
+当后端数据库管理系统是MySQL、PostgreSQL或Microsoft SQL server时，可以将本地文件上载到数据库服务器的文件系统中，并且会话用户具有滥用数据库特定功能和架构弱点所需的特权。指定的文件可以是文本文件或二进制文件。sqlmap将正确处理它。
 
-It is possible to upload a local file to the database server's file system when the back-end database management system is either MySQL, PostgreSQL or Microsoft SQL Server, and the session user has the needed privileges to abuse database specific functionalities and architectural weaknesses. The file specified can be either a textual or a binary file. sqlmap will handle it properly. 
+这些技术在白皮书中很详细 [Advanced SQL injection to operating system full control](http://www.slideshare.net/inquis/advanced-sql-injection-to-operating-system-full-control-whitepaper-4633857).
 
-These techniques are detailed in the white paper [Advanced SQL injection to operating system full control](http://www.slideshare.net/inquis/advanced-sql-injection-to-operating-system-full-control-whitepaper-4633857).
-
-Example against a MySQL target to upload a binary UPX-compressed file:
+针对MySQL的目标上传一个二进制压缩文件的示例:
 
 ```
 $ file /software/nc.exe.packed 
@@ -1562,21 +1561,21 @@ fully written on the back-end DBMS file system? [Y/n] y
 ytes, same size as the local file '/software/nc.exe.packed'
 ```
 
-## Operating system takeover
+## 操作系统的接管
 
-### Run arbitrary operating system command
+### 运行任意操作系统命令
 
-Option and switch: `--os-cmd` and `--os-shell`
+选项和开关: `--os-cmd` 和 `--os-shell`
 
-It is possible to **run arbitrary commands on the database server's underlying operating system** when the back-end database management system is either MySQL, PostgreSQL or Microsoft SQL Server, and the session user has the needed privileges to abuse database specific functionalities and architectural weaknesses.
+当后端数据库管理系统是MySQL、PostgreSQL或Microsoft SQL server时，可以**在数据库服务器的底层操作系统上运行任意命令**，而会话用户拥有滥用数据库特定功能和架构弱点所需的特权。
 
-On MySQL and PostgreSQL, sqlmap uploads (via the file upload functionality explained above) a shared library (binary file) containing two user-defined functions, `sys_exec()` and `sys_eval()`, then it creates these two functions on the database and calls one of them to execute the specified command, depending on user's choice to display the standard output or not. On Microsoft SQL Server, sqlmap abuses the `xp_cmdshell` stored procedure: if it is disabled (by default on Microsoft SQL Server >= 2005), sqlmap re-enables it; if it does not exist, sqlmap creates it from scratch.
+在MySQL和PostgreSQL中，sqlmap上传(通过上面解释的文件上传功能)共享库(二进制文件)，其中包含两个用户定义函数，`sys_exec()` 和 `sys_eval()`, 然后，它在数据库中创建这两个函数，并调用其中一个函数执行指定的命令，这取决于用户选择显示标准输出。在Microsoft SQL Server上，sqlmap滥用了 `xp_cmdshell`存储过程:如果它是禁用的(默认情况下是在Microsoft SQL Server > = 2005)，sqlmap重新启用它;如果它不存在，sqlmap将从头创建它。
 
-When the user requests the standard output, sqlmap uses one of the enumeration SQL injection techniques (blind, inband or error-based) to retrieve it. Vice versa, if the standard output is not required, stacked query SQL injection technique is used to execute the command.
+当用户请求标准输出时，sqlmap使用一个枚举SQL注入技术(blind, inband or error-based)来检索它。反之亦然，如果不需要标准输出，则使用堆叠查询SQL注入技术来执行命令。
 
-These techniques are detailed in the white paper [Advanced SQL injection to operating system full control](http://www.slideshare.net/inquis/advanced-sql-injection-to-operating-system-full-control-whitepaper-4633857).
+这些技术在白皮书中很详细[Advanced SQL injection to operating system full control](http://www.slideshare.net/inquis/advanced-sql-injection-to-operating-system-full-control-whitepaper-4633857).
 
-Example against a PostgreSQL target:
+针对PostgreSQL目标的示例:
 
 ```
 $ python sqlmap.py -u "http://192.168.136.131/sqlmap/pgsql/get_int.php?id=1" --\
