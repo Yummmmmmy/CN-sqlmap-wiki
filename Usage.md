@@ -1133,63 +1133,64 @@ database management system users password hashes:
     clear-text password: testpass
 ```
 
-Not only sqlmap enumerated the DBMS users and their passwords, but it also recognized the hash format to be PostgreSQL, asked the user whether or not to test the hashes against a dictionary file and identified the clear-text password for the `postgres` user, which is usually a DBA along the other user, `testuser`, password. 
+sqlmap不仅枚举DBMS用户和密码,同时，它也能识别出是PostgreSQL的散列格式,问用户是否要对字典文件进行测试，并且为postgres的用户确认明文密码,这通常沿着其他用户的DBA,`testuser`,密码。
 
-This feature has been implemented for all DBMS where it is possible to enumerate users' password hashes, including Oracle and Microsoft SQL Server pre and post 2005. 
+这个特性已经在所有DBMS中实现，在那里可以枚举用户的密码散列，包括Oracle和Microsoft SQL Server pre和post 2005。
 
-You can also provide the option `-U` to specify the specific user who you want to enumerate and eventually crack the password hash(es). If you provide `CU` as username it will consider it as an alias for current user and will retrieve the password hash(es) for this user. 
+您还可以提供选项 `-U` 来指定要枚举的特定用户，并最终破解密码散列。如果您提供 `CU` 作为用户名，它将把它视为当前用户的别名，并将为该用户检索密码散列。
 
-### List database management system users privileges
+### 列表数据库管理系统用户权限
 
-Switch: `--privileges`
+开关: `--privileges`
 
-When the session user has read access to the system table containing information about the DBMS users, it is possible to enumerate the privileges for each database management system user. By the privileges, sqlmap will also show you which are database administrators.
+当会话用户访问包含DBMS用户信息的系统表时，可以枚举每个数据库管理系统用户的特权。通过特权，sqlmap还将显示哪些是数据库管理员。
 
-You can also provide the option `-U` to specify the user who you want to enumerate the privileges.
+您还可以提供选项 `-U` 来指定要枚举特权的用户。
 
-If you provide `CU` as username it will consider it as an alias for current user and will enumerate the privileges for this user. 
+如果您提供 `CU` 作为用户名，它将把它视为当前用户的别名，并将枚举该用户的特权。
 
-On Microsoft SQL Server, this feature will display you whether or not each user is a database administrator rather than the list of privileges for all users.
+在Microsoft SQL Server上，这个特性将显示每个用户是否是数据库管理员，而不是所有用户的特权列表。
 
-### List database management system users roles
+### 列表数据库管理系统用户角色
 
-Switch: `--roles`
+开关: `--roles`
 
-When the session user has read access to the system table containing information about the DBMS users, it is possible to enumerate the roles for each database management system user.
+当会话用户读取到包含DBMS用户信息的系统表时，可以枚举每个数据库管理系统用户的角色。
 
-You can also provide the option `-U` to specify the user who you want to enumerate the privileges.
+您还可以提供选项 `-U` 来指定要枚举特权的用户。
 
-If you provide `CU` as username it will consider it as an alias for current user and will enumerate the privileges for this user.
+如果您提供 `CU` 作为用户名，它将把它视为当前用户的别名，并将枚举该用户的特权。
 
-This feature is only available when the DBMS is Oracle.
+只有当DBMS是Oracle时，该特性才可用。
 
-### List database management system's databases
+### List数据库管理系统的数据库
 
-Switch: `--dbs`
+开关: `--dbs`
 
-When the session user has read access to the system table containing information about available databases, it is possible to enumerate the list of databases. 
+当会话用户读取包含可用数据库信息的系统表的访问时，可以枚举数据库列表。
 
-### Enumerate database's tables
+### 列举数据库的表
 
-Switches and option: `--tables`, `--exclude-sysdbs` and `-D`
+开关和选项: `--tables`, `--exclude-sysdbs` 和 `-D`
 
-When the session user has read access to the system table containing information about databases' tables, it is possible to enumerate the list of tables for a specific database management system's databases.
+当会话用户读取包含数据库表信息的系统表时，可以枚举特定数据库管理系统数据库的表列表。
 
-If you do not provide a specific database with option `-D`, sqlmap will enumerate the tables for all DBMS databases.
+如果您不提供特定的数据库选项`-D`，sqlmap将枚举所有DBMS数据库的表。
 
-You can also provide the switch `--exclude-sysdbs` to exclude all system databases.
+您还可以提供开关`--exclude-sysdbs`来排除所有系统数据库。
 
-Note that on Oracle you have to provide the `TABLESPACE_NAME` instead of the database name.
+请注意，在Oracle上必须提供`TABLESPACE_NAME`而不是数据库名。
 
-### Enumerate database table columns
+### 列举数据库表列
 
-Switch and options: `--columns`, `-C`, `-T` and `-D`
+开关和选项: `--columns`, `-C`, `-T` 和 `-D`
 
-When the session user has read access to the system table containing information about database's tables, it is possible to enumerate the list of columns for a specific database table. sqlmap also enumerates the data-type for each column. 
+当会话用户读取包含数据库表信息的系统表时，可以枚举特定数据库表的列列表。sqlmap还枚举每个列的数据类型。
 
-This feature depends on option `-T` to specify the table name and optionally on `-D` to specify the database name. When the database name is not specified, the current database name is used. You can also provide the `-C` option to specify the table columns name like the one you provided to be enumerated.
 
-Example against a SQLite target:
+该特性依赖于选项`-T` 来指定表名，并可选在`-D`上指定数据库名称。当没有指定数据库名称时，将使用当前数据库名称。您还可以提供 `-C`选项来指定表列名称，如您所提供的枚举类型。
+
+针对SQLite目标的例子:
 
 ```
 $ python sqlmap.py -u "http://192.168.136.131/sqlmap/sqlite/get_int.php?id=1" -\
@@ -1207,15 +1208,15 @@ Table: users
 +---------+---------+
 ```
 
-Note that on PostgreSQL you have to provide `public` or the name of a system database. That's because it is not possible to enumerate  other databases tables, only the tables under the schema that the web application's user is connected to, which is always aliased by `public`. 
+请注意，在PostgreSQL上必须提供`public`或系统数据库的名称。这是因为不可能枚举其他数据库表，只有在web应用程序的用户连接到的模式下的表，它总是被`public`所定义。
 
-### Enumerate database management system schema
+### 枚举数据库管理系统模式
 
-Switches: `--schema` and `--exclude-sysdbs`
+开关: `--schema` 和 `--exclude-sysdbs`
 
-User can retrieve a DBMS schema by using this switch. Schema listing will contain all databases, tables and columns, together with their respective types. In combination with `--exclude-sysdbs` only part of the schema containing non-system databases will be retrieved and shown.
+用户可以通过使用这个开关来检索DBMS模式。模式清单将包含所有数据库、表和列，以及它们各自的类型。与`--exclude-sysdbs`相结合，将检索并显示包含非系统数据库的模式的一部分。
 
-Example against a MySQL target:
+针对MySQL目标的例子:
 
 ```
 $ python sqlmap.py -u "http://192.168.48.130/sqlmap/mysql/get_int.php?id=1" --s\
@@ -1273,13 +1274,13 @@ Table: users
 [...]
 ```
 
-### Retrieve number of entries for table(s)
+### 检索表的条目数
 
-Switch: `--count`
+开关: `--count`
 
-In case that user wants just to know the number of entries in table(s) prior to dumping the desired one, he can use this switch.
+如果用户只想知道在转储所需的表之前的表中的条目数，他可以使用这个开关。
 
-Example against a Microsoft SQL Server target:
+针对Microsoft SQL服务器目标的例子:
 
 ```
 $ python sqlmap.py -u "http://192.168.21.129/sqlmap/mssql/iis/get_int.asp?id=1"\
