@@ -1623,15 +1623,13 @@ sqlmap依赖于Metasploit来创建shell代码并实现四种不同的技术来�
 
 * 通过sqlmap拥有用户定义的函数 `sys_bineval()`，实现数据库 **Metasploit的shell代码的内存执行** 。支持MySQL和PostgreSQL - 开关 `--os-pwn`.
 * 通过sqlmap自己的用户定义函数`sys_exec()`，上载和执行一个Metasploit的 **s独立有效负载** ，在MySQL和PostgreSQL或通过`xp_cmdshell()`在微软的SQL服务器上 - 开关 `--os-pwn`.
-* 通过执行**SMB反射攻击**来执行Metasploit的shell代码 ([MS08-068](http://www.microsoft.com/technet/security/Bulletin/MS08-068.mspx)) 通过一条从数据库服务器到攻击者的机器的UNC路径请求， 其中 Metasploit `smb_relay` 服务器利用侦听器。 在运行sqlmap时，在Linux / Unix上使用高权限 (`uid=0`) on Linux/Unix and the target DBMS runs as Administrator on Windows - switch `--os-smbrelay`.
-* Database in-memory execution of the Metasploit's shellcode by exploiting **Microsoft SQL Server 2000 and 2005
-`sp_replwritetovarbin` stored procedure heap-based buffer overflow** ([MS09-004](http://www.microsoft.com/technet/security/bulletin/ms09-004.mspx)). sqlmap has its own exploit to trigger the
-vulnerability with automatic DEP memory protection bypass, but it relies on Metasploit to generate the shellcode to get executed upon successful exploitation - switch `--os-bof`.
+* 通过执行**SMB反射攻击**来执行Metasploit的shell代码 ([MS08-068](http://www.microsoft.com/technet/security/Bulletin/MS08-068.mspx)) 通过一条从数据库服务器到攻击者的机器的UNC路径请求， 其中 Metasploit `smb_relay` 服务器利用侦听器。 在运行sqlmap时，在Linux / Unix上使用高权限 (`uid=0`) 在Linux / Unix上，目标DBMS在Windows上作为管理员运行 - 开关 `--os-smbrelay`.
+* 通过开发 **Microsoft SQL Server 2000 and 2005`sp_replwritetovarbin` stored procedure heap-based buffer overflow**Metasploit的shell代码的数据库内存执行 ([MS09-004](http://www.microsoft.com/technet/security/bulletin/ms09-004.mspx)). ssqlmap有自己的漏洞来触发
+使用自动DEP内存保护旁路的漏洞，但它依赖于Metasploit来生成被执行的成功的开发 - 开关 `--os-bof`.
 
-These techniques are detailed in the white paper [Advanced SQL injection to operating system full control](http://www.slideshare.net/inquis/advanced-sql-injection-to-operating-system-full-control-whitepaper-4633857) and in the
-slide deck [Expanding the control over the operating system from the database](http://www.slideshare.net/inquis/expanding-the-control-over-the-operating-system-from-the-database).
+这些技术在白皮书中很详细 [Advanced SQL injection to operating system full control](http://www.slideshare.net/inquis/advanced-sql-injection-to-operating-system-full-control-whitepaper-4633857) 在幻灯片上 [Expanding the control over the operating system from the database](http://www.slideshare.net/inquis/expanding-the-control-over-the-operating-system-from-the-database).
 
-Example against a MySQL target:
+针对MySQL目标的例子:
 
 ```
 $ python sqlmap.py -u "http://192.168.136.129/sqlmap/mysql/iis/get_int_55.aspx?\
@@ -1740,41 +1738,41 @@ meterpreter > exit
 [*] Meterpreter session 1 closed.  Reason: User exit
 ```
 
-By default MySQL on Windows runs as `SYSTEM`, however PostgreSQL runs as a low-privileged user `postgres` on both Windows and Linux. Microsoft SQL Server 2000 by default runs as `SYSTEM`, whereas Microsoft SQL Server 2005 and 2008 run most of the times as `NETWORK SERVICE` and sometimes as `LOCAL SERVICE`. 
+默认情况下，MySQL作为 `系统`在Windows上运行, 但是PostgreSQL在Windows和Linux上都是低权限用户的 `数据库` 。默认情况下，微软SQL Server 2000作为`SYSTEM`运行，而微软SQL Server 2005和2008运行的大部分时间是 `网络服务` 有时则是 `本地服务`。
 
-It is possible to provide sqlmap with switch `--priv-esc` to perform a **database process' user privilege escalation** via Metasploit's `getsystem` command which include, among others, the [kitrap0d](http://archives.neohapsis.com/archives/fulldisclosure/2010-01/0346.html) technique ([MS10-015](http://www.microsoft.com/technet/security/bulletin/ms10-015.mspx)).
+通过Metasploit的 `getsystem` 命令，包括其他命令，使用`--priv-esc` 开关提供sqlmap来执行**数据库进程的用户权限升级**， [kitrap0d](http://archives.neohapsis.com/archives/fulldisclosure/2010-01/0346.html) 技术 ([MS10-015](http://www.microsoft.com/technet/security/bulletin/ms10-015.mspx)).
 
-## Windows registry access
+## Windows注册表访问
 
-It is possible to access Windows registry when the back-end database management system is either MySQL, PostgreSQL or Microsoft SQL Server, and when the web application supports stacked queries. Also, session user has to have the needed privileges to access it. 
+当后端数据库管理系统是MySQL、PostgreSQL或Microsoft SQL Server时，以及当web应用程序支持堆叠查询时，可以访问Windows注册表。而且，会话用户必须具有访问它的所需权限。
 
-### Read a Windows registry key value
+### 读取Windows注册表的键值
 
-Switch: `--reg-read`
+开关: `--reg-read`
 
-Using this switch you can read registry key values.
+使用这个开关，您可以读取注册表键值。
 
-### Write a Windows registry key value
+### 编写一个Windows注册表的键值
 
-Switch: `--reg-add`
+开关: `--reg-add`
 
-Using this switch you can write registry key values.
+使用这个开关，您可以编写注册表键值。
 
-### Delete a Windows registry key
+### 删除一个Windows注册表键
 
-Switch: `--reg-del`
+开关: `--reg-del`
 
-Using this switch you can delete registry keys.
+使用这个开关你可以删除注册表键。
 
-### Auxiliary registry options
+### 辅助注册选项
 
-Options: `--reg-key`, `--reg-value`, `--reg-data` and `--reg-type`
+选项: `--reg-key`, `--reg-value`, `--reg-data` and `--reg-type`
 
-These options can be used to provide data needed for proper running of switches `--reg-read`, `--reg-add` and  `--reg-del`. So, instead of providing registry key information when asked, you can use them at command prompt as program arguments. 
+这些选项可用于提供正确运行开关 `--reg-read`, `--reg-add` 和  `--reg-del`的数据。因此，当被询问时，您不能提供注册表关键信息，您可以在命令提示符中使用它们作为程序参数。
 
-With `--reg-key` option you specify used Windows registry key path, with `--reg-value` value item name inside provided key, with `--reg-data` value data, while with `--reg-type` option you specify type of the value item.
+使用`--reg-key`选项指定使用的Windows注册表键路径，使用 `--reg-value` 的值项目名称在内部提供键，使用 `--reg-data` 值数据，同时，使用 `--reg-type`选项指定值项的类型。
 
-A sample command line for adding a registry key hive follows:
+命令行用于添加注册中心密钥蜂箱的示例:
 
 ```
 $ python sqlmap.py -u http://192.168.136.129/sqlmap/pgsql/get_int.aspx?id=1 --r\
